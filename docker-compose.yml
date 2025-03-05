@@ -121,72 +121,23 @@ secrets:
         file: "./secrets/JWT_PRIVATE_KEY"
 
 services:
-    alpaca-dev: &alpaca
+    bus-dev: &bus
         <<: [*dev, *common]
-        image: ${ISLANDORA_REPOSITORY}/alpaca:${ISLANDORA_TAG}
+        image: ghcr.io/libops/isle-event-bus:main
+        volumes:
+          - ./certs/rootCA.pem:/app/ca.pem
         networks:
             default:
                 aliases: # Allow access without using the `-dev` or `-prod` suffix.
-                    - alpaca
+                    - bus
         depends_on:
             activemq-dev:
                 condition: service_healthy
-    alpaca-prod:
-        <<: [*prod, *alpaca]
-        secrets:
-            - source: ALPACA_JMS_PASSWORD
+    bus-prod:
+        <<: [*prod, *bus]
         depends_on:
             activemq-prod:
                 condition: service_healthy
-    crayfits-dev: &crayfits
-        <<: [*dev, *common]
-        image: ${ISLANDORA_REPOSITORY}/crayfits:${ISLANDORA_TAG}
-        networks:
-            default:
-                aliases: # Allow access without using the `-dev` or `-prod` suffix.
-                    - crayfits
-    crayfits-prod:
-        <<: [*prod, *crayfits]
-        secrets: *secrets-jwt-public
-    fits-dev: &fits
-        <<: [*dev, *common]
-        image: ${ISLANDORA_REPOSITORY}/fits:${ISLANDORA_TAG}
-        networks:
-            default:
-                aliases: # Allow access without using the `-dev` or `-prod` suffix.
-                    - fits
-    fits-prod:
-        <<: [*prod, *fits]
-    homarus-dev: &homarus
-        <<: [*dev, *common]
-        image: ${ISLANDORA_REPOSITORY}/homarus:${ISLANDORA_TAG}
-        networks:
-            default:
-                aliases: # Allow access without using the `-dev` or `-prod` suffix.
-                    - homarus
-    homarus-prod:
-        <<: [*prod, *homarus]
-        secrets: *secrets-jwt-public
-    houdini-dev: &houdini
-        <<: [*dev, *common]
-        image: ${ISLANDORA_REPOSITORY}/houdini:${ISLANDORA_TAG}
-        networks:
-            default:
-                aliases: # Allow access without using the `-dev` or `-prod` suffix.
-                    - houdini
-    houdini-prod:
-        <<: [*prod, *houdini]
-        secrets: *secrets-jwt-public
-    hypercube-dev: &hypercube
-        <<: [*dev, *common]
-        image: ${ISLANDORA_REPOSITORY}/hypercube:${ISLANDORA_TAG}
-        networks:
-            default:
-                aliases: # Allow access without using the `-dev` or `-prod` suffix.
-                    - hypercube
-    hypercube-prod:
-        <<: [*prod, *hypercube]
-        secrets: *secrets-jwt-public
     mariadb-dev: &mariadb
         <<: [*dev, *common]
         image: ${ISLANDORA_REPOSITORY}/mariadb:${ISLANDORA_TAG}
